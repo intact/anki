@@ -20,8 +20,7 @@ class Preferences(QDialog):
         self.form.setupUi(self)
         self.form.buttonBox.button(QDialogButtonBox.Help).setAutoDefault(False)
         self.form.buttonBox.button(QDialogButtonBox.Close).setAutoDefault(False)
-        self.connect(self.form.buttonBox, SIGNAL("helpRequested()"),
-                     lambda: openHelp("profileprefs"))
+        self.form.buttonBox.helpRequested.connect(lambda: openHelp("profileprefs"))
         self.setupCollection()
         self.setupNetwork()
         self.setupBackup()
@@ -89,8 +88,7 @@ class Preferences(QDialog):
             self._hideAuth()
         else:
             self.form.syncUser.setText(self.prof.get('syncUser', ""))
-            self.connect(self.form.syncDeauth, SIGNAL("clicked()"),
-                         self.onSyncDeauth)
+            self.form.syncDeauth.clicked.connect(self.onSyncDeauth)
 
     def _hideAuth(self):
         self.form.syncDeauth.setVisible(False)
@@ -117,9 +115,7 @@ Not currently enabled; click the sync button in the main window to enable."""))
     def setupBackup(self):
         self.form.numBackups.setValue(self.prof['numBackups'])
         self.form.compressBackups.setChecked(self.prof.get("compressBackups", True))
-        self.connect(self.form.openBackupFolder,
-                     SIGNAL("linkActivated(QString)"),
-                     self.onOpenBackup)
+        self.form.openBackupFolder.linkActivated.connect(self.onOpenBackup)
 
     def onOpenBackup(self):
         openFolder(self.mw.pm.backupFolder())
@@ -134,9 +130,7 @@ Not currently enabled; click the sync button in the main window to enable."""))
     def setupOptions(self):
         self.form.stripHTML.setChecked(self.prof['stripHTML'])
         self.form.pastePNG.setChecked(self.prof.get("pastePNG", False))
-        self.connect(
-            self.form.profilePass, SIGNAL("clicked()"),
-            self.onProfilePass)
+        self.form.profilePass.clicked.connect(self.onProfilePass)
 
     def updateOptions(self):
         self.prof['stripHTML'] = self.form.stripHTML.isChecked()

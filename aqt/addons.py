@@ -21,9 +21,9 @@ class AddonManager(object):
 
     def __init__(self, mw):
         self.mw = mw
-        f = self.mw.form; s = SIGNAL("triggered()")
-        self.mw.connect(f.actionOpenPluginFolder, s, self.onOpenAddonFolder)
-        self.mw.connect(f.actionDownloadSharedPlugin, s, self.onGetAddons)
+        f = self.mw.form
+        f.actionOpenPluginFolder.triggered.connect(self.onOpenAddonFolder)
+        f.actionDownloadSharedPlugin.triggered.connect(self.onGetAddons)
         self._menus = []
         if isWin:
             self.clearAddonCache()
@@ -46,9 +46,8 @@ class AddonManager(object):
     # Menus
     ######################################################################
 
-    def onOpenAddonFolder(self, path=None):
-        if path is None:
-            path = self.addonsFolder()
+    def onOpenAddonFolder(self):
+        path = self.addonsFolder()
         openFolder(path)
 
     def rebuildAddonsMenu(self):
@@ -60,12 +59,10 @@ class AddonManager(object):
             self._menus.append(m)
             a = QAction(_("Edit..."), self.mw)
             p = os.path.join(self.addonsFolder(), file)
-            self.mw.connect(a, SIGNAL("triggered()"),
-                            lambda p=p: self.onEdit(p))
+            a.triggered.connect(lambda c, p=p: self.onEdit(p))
             m.addAction(a)
             a = QAction(_("Delete..."), self.mw)
-            self.mw.connect(a, SIGNAL("triggered()"),
-                            lambda p=p: self.onRem(p))
+            a.triggered.connect(lambda c, p=p: self.onRem(p))
             m.addAction(a)
 
     def onEdit(self, path):
@@ -74,8 +71,7 @@ class AddonManager(object):
         frm.setupUi(d)
         d.setWindowTitle(os.path.basename(path))
         frm.text.setPlainText(unicode(open(path).read(), "utf8"))
-        d.connect(frm.buttonBox, SIGNAL("accepted()"),
-                  lambda: self.onAcceptEdit(path, frm))
+        frm.buttonBox.accepted.connect(lambda: self.onAcceptEdit(path, frm))
         d.exec_()
 
     def onAcceptEdit(self, path, frm):
@@ -146,7 +142,7 @@ class GetAddons(QDialog):
         self.form.setupUi(self)
         b = self.form.buttonBox.addButton(
             _("Browse"), QDialogButtonBox.ActionRole)
-        self.connect(b, SIGNAL("clicked()"), self.onBrowse)
+        b.clicked.connect(self.onBrowse)
         restoreGeom(self, "getaddons", adjustSize=True)
         self.exec_()
         saveGeom(self, "getaddons")

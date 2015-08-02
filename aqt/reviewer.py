@@ -36,7 +36,7 @@ class Reviewer(object):
         # qshortcut so we don't autorepeat
         self.delShortcut = QShortcut(QKeySequence("Delete"), self.mw)
         self.delShortcut.setAutoRepeat(False)
-        self.mw.connect(self.delShortcut, SIGNAL("activated()"), self.onDelete)
+        self.delShortcut.activated.connect(self.onDelete)
         addHook("leech", self.onLeech)
 
     def show(self):
@@ -711,7 +711,7 @@ function showAnswer(txt) {
             label, scut, func = row
             a = m.addAction(label)
             a.setShortcut(QKeySequence(scut))
-            a.connect(a, SIGNAL("triggered()"), func)
+            a.triggered.connect(func)
         runHook("Reviewer.contextMenuEvent",self,m)
         m.exec_(QCursor.pos())
 

@@ -14,6 +14,10 @@ from aqt.utils import showText
 
 class LatestVersionFinder(QThread):
 
+    newMsg = pyqtSignal(str)
+    newVerAvail = pyqtSignal(str)
+    clockIsOff = pyqtSignal(str)
+
     def __init__(self, main):
         QThread.__init__(self)
         self.main = main
@@ -43,12 +47,12 @@ class LatestVersionFinder(QThread):
             # behind proxy, corrupt message, etc
             return
         if resp['msg']:
-            self.emit(SIGNAL("newMsg"), resp)
+            self.newMsg.emit(resp)
         if resp['ver']:
-            self.emit(SIGNAL("newVerAvail"), resp['ver'])
+            self.newVerAvail.emit(resp['ver'])
         diff = resp['time'] - time.time()
         if abs(diff) > 300:
-            self.emit(SIGNAL("clockIsOff"), diff)
+            self.clockIsOff.emit(diff)
 
 def askAndUpdate(mw, ver):
     baseStr = (

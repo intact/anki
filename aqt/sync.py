@@ -46,7 +46,7 @@ class SyncManager(QObject):
         t = self.thread = SyncThread(
             self.pm.collectionPath(), self.pm.profile['syncKey'],
             auth=auth, media=self.pm.profile['syncMedia'])
-        self.connect(t, SIGNAL("event"), self.onEvent)
+        t.event.connect(self.onEvent)
         self.label = _("Connecting...")
         self.mw.progress.start(immediate=True, label=self.label)
         self.sentBytes = self.recvBytes = 0
@@ -78,7 +78,7 @@ automatically."""))
                 a=self.sentBytes // 1024,
                 b=self.recvBytes // 1024)))
 
-    def onEvent(self, evt, *args):
+    def onEvent(self, evt, args):
         pu = self.mw.progress.update
         if evt == "badAuth":
             tooltip(
@@ -217,8 +217,8 @@ enter your details below.""") %
         vbox.addLayout(g)
         bb = QDialogButtonBox(QDialogButtonBox.Ok|QDialogButtonBox.Cancel)
         bb.button(QDialogButtonBox.Ok).setAutoDefault(True)
-        self.connect(bb, SIGNAL("accepted()"), d.accept)
-        self.connect(bb, SIGNAL("rejected()"), d.reject)
+        bb.accepted.connect(d.accept)
+        bb.rejected.connect(d.reject)
         vbox.addWidget(bb)
         d.setLayout(vbox)
         d.show()
@@ -275,6 +275,8 @@ Check Database, then sync again."""))
 ######################################################################
 
 class SyncThread(QThread):
+
+    event = pyqtSignal(str, tuple)
 
     def __init__(self, path, hkey, auth=None, media=True):
         QThread.__init__(self)
@@ -421,9 +423,8 @@ class SyncThread(QThread):
         else:
             self.fireEvent("mediaSuccess")
 
-    def fireEvent(self, *args):
-        self.emit(SIGNAL("event"), *args)
-
+    def fireEvent(self, evt, *args):
+        self.event.emit(evt, args)
 
 # Monkey-patch httplib & httplib2 so we can get progress info
 ######################################################################

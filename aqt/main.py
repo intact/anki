@@ -114,16 +114,14 @@ class AnkiQt(QMainWindow):
         d = self.profileDiag = QDialog()
         f = self.profileForm = aqt.forms.profiles.Ui_Dialog()
         f.setupUi(d)
-        d.connect(f.login, SIGNAL("clicked()"), self.onOpenProfile)
-        d.connect(f.profiles, SIGNAL("itemDoubleClicked(QListWidgetItem*)"),
-                  self.onOpenProfile)
-        d.connect(f.quit, SIGNAL("clicked()"), lambda: sys.exit(0))
-        d.connect(f.add, SIGNAL("clicked()"), self.onAddProfile)
-        d.connect(f.rename, SIGNAL("clicked()"), self.onRenameProfile)
-        d.connect(f.delete_2, SIGNAL("clicked()"), self.onRemProfile)
-        d.connect(d, SIGNAL("rejected()"), lambda: d.close())
-        d.connect(f.profiles, SIGNAL("currentRowChanged(int)"),
-                  self.onProfileRowChange)
+        f.login.clicked.connect(self.onOpenProfile)
+        f.profiles.itemDoubleClicked.connect(self.onOpenProfile)
+        f.quit.clicked.connect(lambda: sys.exit(0))
+        f.add.clicked.connect(self.onAddProfile)
+        f.rename.clicked.connect(self.onRenameProfile)
+        f.delete_2.clicked.connect(self.onRemProfile)
+        d.rejected.connect(lambda: d.close())
+        f.profiles.currentRowChanged.connect(self.onProfileRowChange)
         self.refreshProfilesList()
         # raise first, for osx testing
         d.show()
@@ -619,8 +617,7 @@ title="%s">%s</button>''' % (
         self.keyHandler = None
         # debug shortcut
         self.debugShortcut = QShortcut(QKeySequence("Ctrl+:"), self)
-        self.connect(
-            self.debugShortcut, SIGNAL("activated()"), self.onDebug)
+        self.debugShortcut.activated.connect(self.onDebug)
 
     def keyPressEvent(self, evt):
         # do we have a delegate?
@@ -795,23 +792,22 @@ title="%s">%s</button>''' % (
 
     def setupMenus(self):
         m = self.form
-        s = SIGNAL("triggered()")
-        #self.connect(m.actionDownloadSharedPlugin, s, self.onGetSharedPlugin)
-        self.connect(m.actionSwitchProfile, s, self.unloadProfile)
-        self.connect(m.actionImport, s, self.onImport)
-        self.connect(m.actionExport, s, self.onExport)
-        self.connect(m.actionExit, s, self, SLOT("close()"))
-        self.connect(m.actionPreferences, s, self.onPrefs)
-        self.connect(m.actionAbout, s, self.onAbout)
-        self.connect(m.actionUndo, s, self.onUndo)
-        self.connect(m.actionFullDatabaseCheck, s, self.onCheckDB)
-        self.connect(m.actionCheckMediaDatabase, s, self.onCheckMediaDB)
-        self.connect(m.actionDocumentation, s, self.onDocumentation)
-        self.connect(m.actionDonate, s, self.onDonate)
-        self.connect(m.actionStudyDeck, s, self.onStudyDeck)
-        self.connect(m.actionCreateFiltered, s, self.onCram)
-        self.connect(m.actionEmptyCards, s, self.onEmptyCards)
-        self.connect(m.actionNoteTypes, s, self.onNoteTypes)
+        #m.actionDownloadSharedPlugin.triggered.connect(self.onGetSharedPlugin)
+        m.actionSwitchProfile.triggered.connect(lambda:self.unloadProfile())
+        m.actionImport.triggered.connect(self.onImport)
+        m.actionExport.triggered.connect(self.onExport)
+        m.actionExit.triggered.connect(lambda: self.close())
+        m.actionPreferences.triggered.connect(self.onPrefs)
+        m.actionAbout.triggered.connect(self.onAbout)
+        m.actionUndo.triggered.connect(self.onUndo)
+        m.actionFullDatabaseCheck.triggered.connect(self.onCheckDB)
+        m.actionCheckMediaDatabase.triggered.connect(self.onCheckMediaDB)
+        m.actionDocumentation.triggered.connect(self.onDocumentation)
+        m.actionDonate.triggered.connect(self.onDonate)
+        m.actionStudyDeck.triggered.connect(self.onStudyDeck)
+        m.actionCreateFiltered.triggered.connect(self.onCram)
+        m.actionEmptyCards.triggered.connect(self.onEmptyCards)
+        m.actionNoteTypes.triggered.connect(self.onNoteTypes)
 
     def updateTitleBar(self):
         self.setWindowTitle("Anki")
@@ -822,9 +818,9 @@ title="%s">%s</button>''' % (
     def setupAutoUpdate(self):
         import aqt.update
         self.autoUpdate = aqt.update.LatestVersionFinder(self)
-        self.connect(self.autoUpdate, SIGNAL("newVerAvail"), self.newVerAvail)
-        self.connect(self.autoUpdate, SIGNAL("newMsg"), self.newMsg)
-        self.connect(self.autoUpdate, SIGNAL("clockIsOff"), self.clockIsOff)
+        self.autoUpdate.newVerAvail.connect(self.newVerAvail)
+        self.autoUpdate.newMsg.connect(self.newMsg)
+        self.autoUpdate.clockIsOff.connect(self.clockIsOff)
         self.autoUpdate.start()
 
     def newVerAvail(self, ver):
@@ -959,9 +955,8 @@ will be lost. Continue?"""))
         b = QPushButton(_("Delete Unused"))
         b.setAutoDefault(False)
         box.addButton(b, QDialogButtonBox.ActionRole)
-        b.connect(
-            b, SIGNAL("clicked()"), lambda u=unused, d=diag: self.deleteUnused(u, d))
-        diag.connect(box, SIGNAL("rejected()"), diag, SLOT("reject()"))
+        b.clicked.connect(lambda c, u=unused, d=diag: self.deleteUnused(u, d))
+        diag.rejected.connect(lambda: diag.reject())
         diag.setMinimumHeight(400)
         diag.setMinimumWidth(500)
         restoreGeom(diag, "checkmediadb")
@@ -1010,7 +1005,7 @@ will be lost. Continue?"""))
             self.col.remCards(cids)
             tooltip(ngettext("%d card deleted.", "%d cards deleted.", len(cids)) % len(cids))
             self.reset()
-        diag.connect(box, SIGNAL("accepted()"), onDelete)
+        box.accepted.connect(onDelete)
         diag.show()
 
     # Debugging
@@ -1021,12 +1016,10 @@ will be lost. Continue?"""))
         frm = aqt.forms.debug.Ui_Dialog()
         frm.setupUi(d)
         s = self.debugDiagShort = QShortcut(QKeySequence("ctrl+return"), d)
-        self.connect(s, SIGNAL("activated()"),
-                     lambda: self.onDebugRet(frm))
+        s.activated.connect(lambda: self.onDebugRet(frm))
         s = self.debugDiagShort = QShortcut(
             QKeySequence("ctrl+shift+return"), d)
-        self.connect(s, SIGNAL("activated()"),
-                     lambda: self.onDebugPrint(frm))
+        s.activated.connect(lambda: self.onDebugPrint(frm))
         d.show()
 
     def _captureOutput(self, on):
@@ -1097,8 +1090,7 @@ will be lost. Continue?"""))
         if isMac:
             # mac users expect a minimize option
             self.minimizeShortcut = QShortcut("Ctrl+M", self)
-            self.connect(self.minimizeShortcut, SIGNAL("activated()"),
-                         self.onMacMinimize)
+            self.minimizeShortcut.activated.connect(self.onMacMinimize)
             self.hideMenuAccels = True
             self.maybeHideAccelerators()
             self.hideStatusTips()
@@ -1129,7 +1121,7 @@ will be lost. Continue?"""))
     ##########################################################################
 
     def setupAppMsg(self):
-        self.connect(self.app, SIGNAL("appMsg"), self.onAppMsg)
+        self.app.appMsg.connect(self.onAppMsg)
 
     def onAppMsg(self, buf):
         if self.state == "startup":

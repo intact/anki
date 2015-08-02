@@ -520,7 +520,7 @@
   </connection>
   <connection>
    <sender>actionClose</sender>
-   <signal>activated()</signal>
+   <signal>triggered()</signal>
    <receiver>Dialog</receiver>
    <slot>close()</slot>
    <hints>

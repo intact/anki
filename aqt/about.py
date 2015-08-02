@@ -14,9 +14,7 @@ def show(parent):
     abt.label.page().setLinkDelegationPolicy(QWebPage.DelegateAllLinks)
     def onLink(url):
         openLink(url.toString())
-    parent.connect(abt.label,
-                    SIGNAL("linkClicked(QUrl)"),
-                    onLink)
+    abt.label.linkClicked.connect(onLink)
     abouttext = "<center><img src='qrc:/icons/anki-logo-thin.png'></center>"
     abouttext += '<p>' + _("Anki is a friendly, intelligent spaced learning \
 system. It's free and open source.")

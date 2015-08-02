@@ -175,7 +175,7 @@ carefully, as a lot has changed since the previous Anki version."""))
                 self.thread.start()
                 # and periodically update the GUI
                 self.timer = QTimer(self)
-                self.timer.connect(self.timer, SIGNAL("timeout()"), self.onTimer)
+                self.timer.timeout.connect(self.onTimer)
                 self.timer.start(1000)
                 self.onTimer()
             def onTimer(self):

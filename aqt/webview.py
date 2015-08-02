@@ -54,8 +54,8 @@ class AnkiWebView(QWebView):
         self.page().setLinkDelegationPolicy(QWebPage.DelegateAllLinks)
         self.setLinkHandler()
         self.setKeyHandler()
-        self.connect(self, SIGNAL("linkClicked(QUrl)"), self._linkHandler)
-        self.connect(self, SIGNAL("loadFinished(bool)"), self._loadFinished)
+        self.linkClicked.connect(self._linkHandler)
+        self.loadFinished.connect(self._loadFinished)
         self.allowDrops = False
         # reset each time new html is set; used to detect if still in same state
         self.key = None
@@ -83,8 +83,7 @@ class AnkiWebView(QWebView):
             return
         m = QMenu(self)
         a = m.addAction(_("Copy"))
-        a.connect(a, SIGNAL("triggered()"),
-                  lambda: self.triggerPageAction(QWebPage.Copy))
+        a.triggered.connect(lambda: self.triggerPageAction(QWebPage.Copy))
         runHook("AnkiWebView.contextMenuEvent", self, m)
         m.popup(QCursor.pos())
 

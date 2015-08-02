@@ -17,14 +17,16 @@ try:
 except:
     # missing in older versions
     pass
-from PyQt4.QtCore import *
-from PyQt4.QtGui import *
-from PyQt4.QtWebKit import QWebPage, QWebView, QWebSettings
-from PyQt4.QtNetwork import QLocalServer, QLocalSocket
+from PyQt5.QtCore import *
+from PyQt5.QtGui import *
+from PyQt5.QtWidgets import *
+from PyQt5.QtWebKit import QWebSettings
+from PyQt5.QtWebKitWidgets import QWebPage, QWebView
+from PyQt5.QtNetwork import QLocalServer, QLocalSocket
 
 
 def debug():
-  from PyQt4.QtCore import pyqtRemoveInputHook
+  from PyQt5.QtCore import pyqtRemoveInputHook
   from pdb import set_trace
   pyqtRemoveInputHook()
   set_trace()
@@ -33,7 +35,7 @@ import sys, traceback
 
 if os.environ.get("DEBUG"):
     def info(type, value, tb):
-        from PyQt4.QtCore import pyqtRemoveInputHook
+        from PyQt5.QtCore import pyqtRemoveInputHook
         for line in traceback.format_exception(type, value, tb):
             sys.stdout.write(line)
         pyqtRemoveInputHook()

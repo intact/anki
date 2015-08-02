@@ -14,7 +14,6 @@ class DeckChooser(QHBoxLayout):
         self.mw = mw
         self.deck = mw.col
         self.label = label
-        self.setMargin(0)
         self.setSpacing(8)
         self.setupDecks()
         self.widget.setLayout(self)
@@ -28,9 +27,9 @@ class DeckChooser(QHBoxLayout):
         self.deck = QPushButton()
         self.deck.setToolTip(shortcut(_("Target Deck (Ctrl+D)")))
         s = QShortcut(QKeySequence(_("Ctrl+D")), self.widget)
-        s.connect(s, SIGNAL("activated()"), self.onDeckChange)
+        s.activated.connect(self.onDeckChange)
         self.addWidget(self.deck)
-        self.connect(self.deck, SIGNAL("clicked()"), self.onDeckChange)
+        self.deck.clicked.connect(self.onDeckChange)
         # starting label
         if self.mw.col.conf.get("addToCur", True):
             col = self.mw.col

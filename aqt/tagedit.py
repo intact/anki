@@ -6,6 +6,8 @@ import re
 
 class TagEdit(QLineEdit):
 
+    lostFocus = pyqtSignal()
+
     # 0 = tags, 1 = decks
     def __init__(self, parent, type=0):
         QLineEdit.__init__(self, parent)
@@ -53,7 +55,7 @@ class TagEdit(QLineEdit):
 
     def focusOutEvent(self, evt):
         QLineEdit.focusOutEvent(self, evt)
-        self.emit(SIGNAL("lostFocus"))
+        self.lostFocus.emit()
         self.completer.popup().hide()
 
     def hideCompleter(self):

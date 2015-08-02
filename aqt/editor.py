@@ -286,7 +286,7 @@ class Editor(object):
 
     def setupOuter(self):
         l = QVBoxLayout()
-        l.setMargin(0)
+        l.setContentsMargins(0, 0, 0, 0)
         l.setSpacing(0)
         self.widget.setLayout(l)
         self.outerLayout = l
@@ -309,9 +309,9 @@ class Editor(object):
                    check=False, native=False, canDisable=True):
         b = QPushButton(text)
         if check:
-            b.connect(b, SIGNAL("clicked(bool)"), func)
+            b.clicked.connect(func)
         else:
-            b.connect(b, SIGNAL("clicked()"), func)
+            b.clicked.connect(func)
         if size:
             b.setFixedHeight(20)
             b.setFixedWidth(20)
@@ -348,10 +348,10 @@ class Editor(object):
         # icons
         self.iconsBox = QHBoxLayout()
         if not isMac:
-            self.iconsBox.setMargin(6)
+            self.iconsBox.setContentsMargins(6, 6, 6, 6)
             self.iconsBox.setSpacing(0)
         else:
-            self.iconsBox.setMargin(0)
+            self.iconsBox.setContentsMargins(0, 0, 0, 0)
             self.iconsBox.setSpacing(14)
         self.outerLayout.addLayout(self.iconsBox)
         b = self._addButton
@@ -387,23 +387,23 @@ class Editor(object):
         but.setFixedWidth(24)
         s = self.clozeShortcut2 = QShortcut(
             QKeySequence(_("Ctrl+Alt+Shift+C")), self.parentWindow)
-        s.connect(s, SIGNAL("activated()"), self.onCloze)
+        s.activated.connect(self.onCloze)
         # fixme: better image names
         b("mail-attachment", self.onAddMedia, _("F3"),
           _("Attach pictures/audio/video (F3)"))
         b("media-record", self.onRecSound, _("F5"), _("Record audio (F5)"))
         b("adv", self.onAdvanced, text=u"▾")
         s = QShortcut(QKeySequence("Ctrl+T, T"), self.widget)
-        s.connect(s, SIGNAL("activated()"), self.insertLatex)
+        s.activated.connect(self.insertLatex)
         s = QShortcut(QKeySequence("Ctrl+T, E"), self.widget)
-        s.connect(s, SIGNAL("activated()"), self.insertLatexEqn)
+        s.activated.connect(self.insertLatexEqn)
         s = QShortcut(QKeySequence("Ctrl+T, M"), self.widget)
-        s.connect(s, SIGNAL("activated()"), self.insertLatexMathEnv)
+        s.activated.connect(self.insertLatexMathEnv)
         s = QShortcut(QKeySequence("Ctrl+Shift+X"), self.widget)
-        s.connect(s, SIGNAL("activated()"), self.onHtmlEdit)
+        s.activated.connect(self.onHtmlEdit)
         # tags
         s = QShortcut(QKeySequence("Ctrl+Shift+T"), self.widget)
-        s.connect(s, SIGNAL("activated()"), lambda: self.tags.setFocus())
+        s.activated.connect(lambda: self.tags.setFocus())
         runHook("setupEditorButtons", self)
 
     def enableButtons(self, val=True):
@@ -606,8 +606,7 @@ class Editor(object):
         d = QDialog(self.widget)
         form = aqt.forms.edithtml.Ui_Dialog()
         form.setupUi(d)
-        d.connect(form.buttonBox, SIGNAL("helpRequested()"),
-                 lambda: openHelp("editor"))
+        form.buttonBox.helpRequested.connect(lambda: openHelp("editor"))
         form.textEdit.setPlainText(self.note.fields[self.currentField])
         form.textEdit.moveCursor(QTextCursor.End)
         d.exec_()
@@ -630,13 +629,12 @@ class Editor(object):
         g.setFlat(True)
         tb = QGridLayout()
         tb.setSpacing(12)
-        tb.setMargin(6)
+        tb.setContentsMargins(6, 6, 6, 6)
         # tags
         l = QLabel(_("Tags"))
         tb.addWidget(l, 1, 0)
         self.tags = aqt.tagedit.TagEdit(self.widget)
-        self.tags.connect(self.tags, SIGNAL("lostFocus"),
-                          self.saveTags)
+        self.tags.lostFocus.connect(self.saveTags)
         self.tags.setToolTip(shortcut(_("Jump to tags with Ctrl+Shift+T")))
         tb.addWidget(self.tags, 1, 1)
         g.setLayout(tb)
@@ -724,7 +722,7 @@ to a cloze type first, via Edit>Change Note Type."""))
         self.onColourChanged()
         hbox = QHBoxLayout()
         hbox.addWidget(self.foregroundFrame)
-        hbox.setMargin(5)
+        hbox.setContentsMargins(5, 5, 5, 5)
         but.setLayout(hbox)
 
     # use last colour
@@ -929,16 +927,16 @@ to a cloze type first, via Edit>Change Note Type."""))
         m = QMenu(self.mw)
         a = m.addAction(_("LaTeX"))
         a.setShortcut(QKeySequence("Ctrl+T, T"))
-        a.connect(a, SIGNAL("triggered()"), self.insertLatex)
+        a.triggered.connect(self.insertLatex)
         a = m.addAction(_("LaTeX equation"))
         a.setShortcut(QKeySequence("Ctrl+T, E"))
-        a.connect(a, SIGNAL("triggered()"), self.insertLatexEqn)
+        a.triggered.connect(self.insertLatexEqn)
         a = m.addAction(_("LaTeX math env."))
         a.setShortcut(QKeySequence("Ctrl+T, M"))
-        a.connect(a, SIGNAL("triggered()"), self.insertLatexMathEnv)
+        a.triggered.connect(self.insertLatexMathEnv)
         a = m.addAction(_("Edit HTML"))
         a.setShortcut(QKeySequence("Ctrl+Shift+X"))
-        a.connect(a, SIGNAL("triggered()"), self.onHtmlEdit)
+        a.triggered.connect(self.onHtmlEdit)
         m.exec_(QCursor.pos())
 
     # LaTeX
@@ -1207,10 +1205,10 @@ class EditorWebView(AnkiWebView):
     def contextMenuEvent(self, evt):
         m = QMenu(self)
         a = m.addAction(_("Cut"))
-        a.connect(a, SIGNAL("triggered()"), self.onCut)
+        a.triggered.connect(self.onCut)
         a = m.addAction(_("Copy"))
-        a.connect(a, SIGNAL("triggered()"), self.onCopy)
+        a.triggered.connect(self.onCopy)
         a = m.addAction(_("Paste"))
-        a.connect(a, SIGNAL("triggered()"), self.onPaste)
+        a.triggered.connect(self.onPaste)
         runHook("EditorWebView.contextMenuEvent", self, m)
         m.popup(QCursor.pos())

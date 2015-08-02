@@ -211,10 +211,7 @@ and no other programs are accessing your profile folders, then try again."""))
 
     def _defaultBase(self):
         if isWin:
-            if False: #qtmajor >= 5:
-                loc = QStandardPaths.writeableLocation(QStandardPaths.DocumentsLocation)
-            else:
-                loc = QDesktopServices.storageLocation(QDesktopServices.DocumentsLocation)
+            loc = QStandardPaths.writableLocation(QStandardPaths.DocumentsLocation)
             return os.path.join(loc, "Anki")
         elif isMac:
             return os.path.expanduser("~/Documents/Anki")
@@ -224,9 +221,8 @@ and no other programs are accessing your profile folders, then try again."""))
             if os.path.exists(p):
                 return p
             else:
-                loc = QDesktopServices.storageLocation(QDesktopServices.DocumentsLocation)
-                if loc[:-1] == QDesktopServices.storageLocation(
-                        QDesktopServices.HomeLocation):
+                loc = QStandardPaths.writableLocation(QStandardPaths.DocumentsLocation)
+                if loc == QStandardPaths.writableLocation(QStandardPaths.HomeLocation):
                     # occasionally "documentsLocation" will return the home
                     # folder because the Documents folder isn't configured
                     # properly; fall back to an English path
@@ -309,8 +305,8 @@ please see:
         d = self.langDiag = NoCloseDiag()
         f = self.langForm = aqt.forms.setlang.Ui_Dialog()
         f.setupUi(d)
-        d.connect(d, SIGNAL("accepted()"), self._onLangSelected)
-        d.connect(d, SIGNAL("rejected()"), lambda: True)
+        d.accepted.connect(self._onLangSelected)
+        d.rejected.connect(lambda: True)
         # default to the system language
         try:
             (lang, enc) = locale.getdefaultlocale()

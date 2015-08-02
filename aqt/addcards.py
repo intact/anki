@@ -55,7 +55,7 @@ class AddCards(QDialog):
         self.addButton = bb.addButton(_("Add"), ar)
         self.addButton.setShortcut(QKeySequence("Ctrl+Return"))
         self.addButton.setToolTip(shortcut(_("Add (shortcut: ctrl+enter)")))
-        self.connect(self.addButton, SIGNAL("clicked()"), self.addCards)
+        self.addButton.clicked.connect(self.addCards)
         # close
         self.closeButton = QPushButton(_("Close"))
         self.closeButton.setAutoDefault(False)
@@ -66,7 +66,7 @@ class AddCards(QDialog):
         self.helpButton.setAutoDefault(False)
         bb.addButton(self.helpButton,
                                         QDialogButtonBox.HelpRole)
-        self.connect(self.helpButton, SIGNAL("clicked()"), self.helpRequested)
+        self.helpButton.clicked.connect(self.helpRequested)
         # history
         b = bb.addButton(
             _("History")+ u" ▾", ar)
@@ -76,7 +76,7 @@ class AddCards(QDialog):
             sc = "Ctrl+H"
         b.setShortcut(QKeySequence(sc))
         b.setToolTip(_("Shortcut: %s") % shortcut(sc))
-        self.connect(b, SIGNAL("clicked()"), self.onHistory)
+        b.clicked.connect(self.onHistory)
         b.setEnabled(False)
         self.historyButton = b
 
@@ -121,8 +121,7 @@ class AddCards(QDialog):
         m = QMenu(self)
         for nid, txt in self.history:
             a = m.addAction(_("Edit %s") % txt)
-            a.connect(a, SIGNAL("triggered()"),
-                      lambda nid=nid: self.editHistory(nid))
+            a.triggered.connect(lambda c, nid=nid: self.editHistory(nid))
         runHook("AddCards.onHistory", self, m)
         m.exec_(self.historyButton.mapToGlobal(QPoint(0,0)))
 

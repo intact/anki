@@ -121,6 +121,8 @@ class AnkiApp(QApplication):
     KEY = "anki"+checksum(getpass.getuser())
     TMOUT = 5000
 
+    appMsg = pyqtSignal(str)
+
     def __init__(self, argv):
         QApplication.__init__(self, argv)
         self._argv = argv
@@ -140,7 +142,7 @@ class AnkiApp(QApplication):
             # previous instance died
             QLocalServer.removeServer(self.KEY)
             self._srv = QLocalServer(self)
-            self.connect(self._srv, SIGNAL("newConnection()"), self.onRecv)
+            self._srv.newConnection.connect(self.onRecv)
             self._srv.listen(self.KEY)
             return False
 
@@ -164,7 +166,7 @@ class AnkiApp(QApplication):
             return
         buf = sock.readAll()
         buf = unicode(buf, sys.getfilesystemencoding(), "ignore")
-        self.emit(SIGNAL("appMsg"), buf)
+        self.appMsg.emit(buf)
         sock.disconnectFromServer()
 
     # OS X file/url handler
@@ -172,7 +174,7 @@ class AnkiApp(QApplication):
 
     def event(self, evt):
         if evt.type() == QEvent.FileOpen:
-            self.emit(SIGNAL("appMsg"), evt.file() or "raise")
+            self.appMsg.emit(evt.file() or "raise")
             return True
         return QApplication.event(self, evt)
 

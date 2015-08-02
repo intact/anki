@@ -26,17 +26,15 @@ class DeckStats(QDialog):
         restoreGeom(self, self.name)
         b = f.buttonBox.addButton(_("Save Image"),
                                           QDialogButtonBox.ActionRole)
-        b.connect(b, SIGNAL("clicked()"), self.browser)
+        b.clicked.connect(self.browser)
         b.setAutoDefault(False)
-        c = self.connect
-        s = SIGNAL("clicked()")
-        c(f.groups, s, lambda: self.changeScope("deck"))
+        f.groups.clicked.connect(lambda: self.changeScope("deck"))
         f.groups.setShortcut("g")
-        c(f.all, s, lambda: self.changeScope("collection"))
-        c(f.month, s, lambda: self.changePeriod(0))
-        c(f.year, s, lambda: self.changePeriod(1))
-        c(f.life, s, lambda: self.changePeriod(2))
-        c(f.web, SIGNAL("loadFinished(bool)"), self.loadFin)
+        f.all.clicked.connect(lambda: self.changeScope("collection"))
+        f.month.clicked.connect(lambda: self.changePeriod(0))
+        f.year.clicked.connect(lambda: self.changePeriod(1))
+        f.life.clicked.connect(lambda: self.changePeriod(2))
+        f.web.loadFinished.connect(self.loadFin)
         maybeHideClose(self.form.buttonBox)
         addCloseShortcut(self)
         self.refresh()
@@ -50,7 +48,7 @@ class DeckStats(QDialog):
         name = time.strftime("-%Y-%m-%d@%H-%M-%S.png",
                              time.localtime(time.time()))
         name = "anki-"+_("stats")+name
-        desktopPath = QDesktopServices.storageLocation(QDesktopServices.DesktopLocation)
+        desktopPath = QStandardPaths.standardLocations(QStandardPaths.DesktopLocation)[0]
         if not os.path.exists(desktopPath):
             os.mkdir(desktopPath)
         path = os.path.join(desktopPath, name)

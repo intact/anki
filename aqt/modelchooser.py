@@ -15,7 +15,7 @@ class ModelChooser(QHBoxLayout):
         self.mw = mw
         self.deck = mw.col
         self.label = label
-        self.setMargin(0)
+        self.setContentsMargins(0, 0, 0, 0)
         self.setSpacing(8)
         self.setupModels()
         addHook('reset', self.onReset)
@@ -30,10 +30,10 @@ class ModelChooser(QHBoxLayout):
         #self.models.setStyleSheet("* { text-align: left; }")
         self.models.setToolTip(shortcut(_("Change Note Type (Ctrl+N)")))
         s = QShortcut(QKeySequence(_("Ctrl+N")), self.widget)
-        s.connect(s, SIGNAL("activated()"), self.onModelChange)
+        s.activated.connect(self.onModelChange)
         self.models.setAutoDefault(False)
         self.addWidget(self.models)
-        self.connect(self.models, SIGNAL("clicked()"), self.onModelChange)
+        self.models.clicked.connect(self.onModelChange)
         # layout
         sizePolicy = QSizePolicy(
             QSizePolicy.Policy(7),
@@ -62,7 +62,7 @@ class ModelChooser(QHBoxLayout):
         current = self.deck.models.current()['name']
         # edit button
         edit = QPushButton(_("Manage"))
-        self.connect(edit, SIGNAL("clicked()"), self.onEdit)
+        edit.clicked.connect(self.onEdit)
         def nameFunc():
             return sorted(self.deck.models.allNames())
         ret = StudyDeck(

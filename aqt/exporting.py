@@ -24,8 +24,7 @@ class ExportDialog(QDialog):
 
     def setup(self, did):
         self.frm.format.insertItems(0, list(zip(*exporters())[0]))
-        self.connect(self.frm.format, SIGNAL("activated(int)"),
-                     self.exporterChanged)
+        self.frm.format.activated.connect(self.exporterChanged)
         self.exporterChanged(0)
         self.decks = [_("All Decks")] + sorted(self.col.decks.allNames())
         self.frm.deck.addItems(self.decks)
@@ -66,12 +65,12 @@ class ExportDialog(QDialog):
             # it's a verbatim apkg export, so place on desktop instead of
             # choosing file; use homedir if no desktop
             usingHomedir = False
-            file = os.path.join(QDesktopServices.storageLocation(
-                QDesktopServices.DesktopLocation), "collection.apkg")
+            file = os.path.join(QStandardPaths.writableLocation(
+                QStandardPaths.DesktopLocation), "collection.apkg")
             if not os.path.exists(os.path.dirname(file)):
                 usingHomedir = True
-                file = os.path.join(QDesktopServices.storageLocation(
-                    QDesktopServices.HomeLocation), "collection.apkg")
+                file = os.path.join(QStandardPaths.writableLocation(
+                    QStandardPaths.HomeLocation), "collection.apkg")
             if os.path.exists(file):
                 if usingHomedir:
                     question = _("%s already exists in your home directory. Overwrite it?")

@@ -12,11 +12,13 @@ class ErrorHandler(QObject):
     "Catch stderr and write into buffer."
     ivl = 100
 
+    errorTimer = pyqtSignal()
+
     def __init__(self, mw):
         QObject.__init__(self, mw)
         self.mw = mw
         self.timer = None
-        self.connect(self, SIGNAL("errorTimer"), self._setTimer)
+        self.errorTimer.connect(self._setTimer)
         self.pool = ""
         sys.stderr = self
 
@@ -34,12 +36,12 @@ class ErrorHandler(QObject):
     def setTimer(self):
         # we can't create a timer from a different thread, so we post a
         # message to the object on the main thread
-        self.emit(SIGNAL("errorTimer"))
+        self.errorTimer.emit()
 
     def _setTimer(self):
         if not self.timer:
             self.timer = QTimer(self.mw)
-            self.mw.connect(self.timer, SIGNAL("timeout()"), self.onTimeout)
+            self.timer.timeout.connect(self.onTimeout)
         self.timer.setInterval(self.ivl)
         self.timer.setSingleShot(True)
         self.timer.start()
