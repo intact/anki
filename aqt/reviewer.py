@@ -14,7 +14,8 @@ from aqt.qt import *
 from anki.utils import  stripHTML, isMac, json
 from anki.hooks import addHook, runHook
 from anki.sound import playFromText, clearAudioQueue, play
-from aqt.utils import mungeQA, getBase, openLink, tooltip, askUserDialog
+from aqt.utils import mungeQA, getBase, openLink, tooltip, askUserDialog, \
+    downArrow
 from aqt.sound import getAudio
 import aqt
 
@@ -337,7 +338,7 @@ The front of this card is empty. Please run Tools>Empty Cards.""")
 hr { background-color:#ccc; margin: 1em; }
 body { margin:1.5em; }
 img { max-width: 95%; max-height: 95%; }
-.marked { position:absolute; right: 7px; top: 7px; display: none; }
+.marked { position:fixed; right: 7px; top: 7px; display: none; }
 #typeans { width: 100%; }
 .typeGood { background: #0f0; }
 .typeBad { background: #f00; }
@@ -545,7 +546,7 @@ min-width: 60px; white-space: nowrap;
 </td>
 <td width=50 align=right valign=top class=stat><span id=time class=stattxt>
 </span><br>
-<button onclick="py.link('more');">%(more)s &#9662;</button>
+<button onclick="py.link('more');">%(more)s %(downArrow)s</button>
 </td>
 </tr>
 </table>
@@ -593,7 +594,9 @@ function showAnswer(txt) {
 </script>
 """ % dict(rem=self._remaining(), edit=_("Edit"),
            editkey=_("Shortcut key: %s") % "E",
-           more=_("More"), time=self.card.timeTaken() // 1000)
+           more=_("More"),
+           downArrow=downArrow(),
+           time=self.card.timeTaken() // 1000)
 
     def _showAnswerButton(self):
         self._bottomReady = True

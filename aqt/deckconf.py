@@ -7,7 +7,8 @@ from anki.consts import NEW_CARDS_RANDOM
 from aqt.qt import *
 import aqt
 from aqt.utils import showInfo, showWarning, openHelp, getOnlyText, askUser, \
-    tooltip, saveGeom, restoreGeom
+    tooltip, saveGeom, restoreGeom, downArrow
+
 
 class DeckConf(QDialog):
     def __init__(self, mw, deck):
@@ -25,7 +26,7 @@ class DeckConf(QDialog):
         self.setWindowModality(Qt.WindowModal)
         self.form.buttonBox.helpRequested.connect(lambda: openHelp("deckoptions"))
         self.form.confOpts.clicked.connect(self.confOpts)
-        self.form.confOpts.setText(u"▾")
+        self.form.confOpts.setText(downArrow())
         self.form.buttonBox.button(QDialogButtonBox.RestoreDefaults).clicked.connect(self.onRestore)
         self.setWindowTitle(_("Options for %s") % self.deck['name'])
         # qt doesn't size properly with altered fonts otherwise

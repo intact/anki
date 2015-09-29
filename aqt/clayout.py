@@ -10,7 +10,7 @@ import aqt
 from anki.sound import playFromText, clearAudioQueue
 from aqt.utils import saveGeom, restoreGeom, getBase, mungeQA,\
     showInfo, askUser, getOnlyText, \
-     showWarning, openHelp
+     showWarning, openHelp, downArrow
 from anki.utils import isMac, isWin, joinFields
 from aqt.webview import AnkiWebView
 import anki.js
@@ -164,7 +164,7 @@ Please create a new card type first."""))
             flip.setAutoDefault(False)
             l.addWidget(flip)
             flip.clicked.connect(self.onFlip)
-        more = QPushButton(_("More") + u" ▾")
+        more = QPushButton(_("More") + u" "+downArrow())
         more.setAutoDefault(False)
         l.addWidget(more)
         more.clicked.connect(lambda: self.onMore(more))
