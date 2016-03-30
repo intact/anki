@@ -414,6 +414,9 @@ class Browser(QMainWindow):
         self.pgUpCut.activated.connect(self.onFirstCard)
         self.pgDownCut = QShortcut(QKeySequence("Shift+End"), self)
         self.pgDownCut.activated.connect(self.onLastCard)
+        # add note
+        self.addCut = QShortcut(QKeySequence("Ctrl+E"), self)
+        self.addCut.activated.connect(self.mw.onAddCard)
         # card info
         self.infoCut = QShortcut(QKeySequence("Ctrl+Shift+I"), self)
         self.infoCut.activated.connect(self.showCardInfo)
@@ -427,6 +430,9 @@ class Browser(QMainWindow):
         self.tagCut2.activated.connect(self.deleteTags)
         self.tagCut3 = QShortcut(QKeySequence("Ctrl+K"), self)
         self.tagCut3.activated.connect(self.onMark)
+        # suspending
+        self.susCut1 = QShortcut(QKeySequence("Ctrl+J"), self)
+        self.susCut1.activated.connect(self.onSuspend)
         # deletion
         self.delCut1 = QShortcut(QKeySequence("Delete"), self)
         self.delCut1.setAutoRepeat(False)
@@ -1687,12 +1693,14 @@ class BrowserToolbar(Toolbar):
 <a class=hitem title="%s" href="%s"><img style="padding: 1px;" valign=bottom src="qrc:/icons/%s.png"> %s</a>'''
             return fmt % (tooltip or title, link, icon, title)
         right = "<div>"
-        right += borderImg("add", "add16", False, _("Add"))
+        right += borderImg("add", "add16", False, _("Add"),
+                       shortcut(_("Add Note (Ctrl+E)")))
         right += borderImg("info", "info", False, _("Info"),
                        shortcut(_("Card Info (Ctrl+Shift+I)")))
         right += borderImg("mark", "star16", mark, _("Mark"),
                        shortcut(_("Mark Note (Ctrl+K)")))
-        right += borderImg("pause", "pause16", pause, _("Suspend"))
+        right += borderImg("pause", "pause16", pause, _("Suspend"),
+                       shortcut(_("Suspend Card (Ctrl+J)")))
         right += borderImg("setDeck", "deck16", False, _("Change Deck"),
                            shortcut(_("Move To Deck (Ctrl+D)")))
         right += borderImg("addtag", "addtag16", False, _("Add Tags"),
