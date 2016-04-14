@@ -4,6 +4,7 @@
 
 import datetime, time
 from aqt.qt import *
+import anki.lang
 from aqt.utils import openFolder, showWarning, getText, openHelp, showInfo
 import aqt
 
@@ -21,6 +22,7 @@ class Preferences(QDialog):
         self.form.buttonBox.button(QDialogButtonBox.Help).setAutoDefault(False)
         self.form.buttonBox.button(QDialogButtonBox.Close).setAutoDefault(False)
         self.form.buttonBox.helpRequested.connect(lambda: openHelp("profileprefs"))
+        self.setupLang()
         self.setupCollection()
         self.setupNetwork()
         self.setupBackup()
@@ -41,6 +43,27 @@ class Preferences(QDialog):
 
     def reject(self):
         self.accept()
+
+    # Language
+    ######################################################################
+
+    def setupLang(self):
+        f = self.form
+        f.lang.addItems([x[0] for x in anki.lang.langs])
+        f.lang.setCurrentIndex(self.langIdx())
+        f.lang.currentIndexChanged.connect(self.onLangIdxChanged)
+
+    def langIdx(self):
+        codes = [x[1] for x in anki.lang.langs]
+        try:
+            return codes.index(anki.lang.getLang())
+        except:
+            return codes.index("en")
+
+    def onLangIdxChanged(self, idx):
+        code = anki.lang.langs[idx][1]
+        self.mw.pm.setLang(code)
+        showInfo(_("Please restart Anki to complete language change."), parent=self)
 
     # Collection options
     ######################################################################
