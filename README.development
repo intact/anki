@@ -1,8 +1,8 @@
 Please see the README file for basic requirements.
 
 In addition to the basic requirements, you also need the PyQt development
-tools (specifically pyrcc4 and pyuic4). These are often contained in a
-separate package on Linux, such as 'pyqt4-dev-tools' on Debian/Ubuntu. On a Mac
+tools (specifically pyrcc5 and pyuic5). These are often contained in a
+separate package on Linux, such as 'pyqt5-dev-tools' on Debian/Ubuntu. On a Mac
 they are part of the PyQt source install.
 
 Windows users, please see the note at the bottom of this file before proceeding.
@@ -63,7 +63,7 @@ Or a way with git bash and perl:
     These two paths must point to your python executable, and to pyuic.py, on your
     system. Typical paths would be:
     <python-path> = C:\\Python27\\python.exe
-    <pyuic-path-string> = C:\\Python27\\Lib\\site-packages\\PyQt4\\uic\\pyuic.py
+    <pyuic-path-string> = C:\\Python27\\Lib\\site-packages\\PyQt5\\uic\\pyuic.py
 
 MAC OSX USERS:
 
