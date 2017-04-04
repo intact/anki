@@ -104,16 +104,16 @@ a flash drive.""" % self.base)
         if isMac:
             return os.path.expanduser("~/Documents/Anki")
         elif isWin:
-            loc = QDesktopServices.storageLocation(QDesktopServices.DocumentsLocation)
+            loc = QStandardPaths.writableLocation(QStandardPaths.DocumentsLocation)
             return os.path.join(loc, "Anki")
         else:
             p = os.path.expanduser("~/Anki")
             if os.path.exists(p):
                 return p
             else:
-                loc = QDesktopServices.storageLocation(QDesktopServices.DocumentsLocation)
-                if loc[:-1] == QDesktopServices.storageLocation(
-                        QDesktopServices.HomeLocation):
+                loc = QStandardPaths.writableLocation(QStandardPaths.DocumentsLocation)
+                if loc[:-1] == QStandardPaths.writableLocation(
+                        QStandardPaths.HomeLocation):
                     # occasionally "documentsLocation" will return the home
                     # folder because the Documents folder isn't configured
                     # properly; fall back to an English path
