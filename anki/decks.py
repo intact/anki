@@ -54,7 +54,7 @@ defaultConf = {
         'order': NEW_CARDS_DUE,
         'perDay': 20,
         # may not be set on old decks
-        'bury': True,
+        'bury': False,
     },
     'lapse': {
         'delays': [10],
@@ -65,14 +65,14 @@ defaultConf = {
         'leechAction': 0,
     },
     'rev': {
-        'perDay': 100,
+        'perDay': 200,
         'ease4': 1.3,
         'fuzz': 0.05,
         'minSpace': 1, # not currently used
         'ivlFct': 1,
         'maxIvl': 36500,
         # may not be set on old decks
-        'bury': True,
+        'bury': False,
     },
     'maxTaken': 60,
     'timer': 0,
